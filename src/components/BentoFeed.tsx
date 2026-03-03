@@ -50,7 +50,7 @@ function BentoCard({
       {feedItem.media_url && mediaIsImage ? (
         <Link
           href={`/content/${feedItem.id}`}
-          className="relative block w-full flex-[1] min-h-0 overflow-hidden bg-stone-100"
+          className="relative block w-full min-h-0 overflow-hidden bg-stone-100 min-[768px]:flex-[1] flex-[2]"
         >
           <img
             src={feedItem.media_url}
@@ -62,27 +62,27 @@ function BentoCard({
       ) : (
         <div className="flex-[1] min-h-[6rem] bg-stone-100" />
       )}
-      <div className="flex flex-col gap-1 p-4 flex-shrink-0 min-h-0 overflow-hidden">
-        <span className="font-sans text-xs font-medium uppercase tracking-widest text-stone-500">
+      <div className="flex flex-col gap-1 p-2 min-[768px]:p-4 flex-shrink-0 min-h-0 overflow-hidden flex-1 min-[768px]:flex-none">
+        <span className="font-sans text-[10px] min-[768px]:text-xs font-medium uppercase tracking-widest text-stone-500">
           {feedItem.category}
         </span>
-        <h3 className="font-serif text-lg font-medium text-stone-900 md:text-xl line-clamp-2">
+        <h3 className="font-serif text-sm md:text-xl font-medium text-stone-900 line-clamp-1 md:line-clamp-2">
           {feedItem.title}
         </h3>
         {feedItem.description && (
-          <p className="font-sans text-sm leading-relaxed text-stone-600 line-clamp-2">
+          <p className="font-sans text-xs min-[768px]:text-sm leading-relaxed text-stone-600 line-clamp-1 min-[768px]:line-clamp-2 hidden min-[768px]:block">
             {feedItem.description}
           </p>
         )}
-        <div className="mt-2 flex flex-wrap items-center gap-2">
+        <div className="mt-1 min-[768px]:mt-2 flex flex-wrap items-center gap-1.5 min-[768px]:gap-2">
           <Link
             href={`/content/${feedItem.id}`}
-            className="font-sans text-sm font-medium text-stone-700 underline hover:text-stone-900"
+            className="font-sans text-xs min-[768px]:text-sm font-medium text-stone-700 underline hover:text-stone-900"
           >
             View details
           </Link>
           {feedItem.category === 'Music' && feedItem.platform_links && feedItem.platform_links.length > 0 && (
-            <span className="font-sans text-xs text-stone-500">
+            <span className="font-sans text-[10px] min-[768px]:text-xs text-stone-500 hidden min-[768px]:inline">
               · {feedItem.platform_links.map((p) => p.name).join(', ')}
             </span>
           )}
