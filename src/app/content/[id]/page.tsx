@@ -77,6 +77,24 @@ export default async function ContentDetailPage({
                   {item.description}
                 </p>
               )}
+              {item.category === 'Music' && item.platform_links && item.platform_links.length > 0 && (
+                <div className="mt-6">
+                  <p className="font-sans text-sm font-medium text-stone-600 mb-2">Listen on</p>
+                  <div className="flex flex-wrap gap-2">
+                    {item.platform_links.map((link, i) => (
+                      <a
+                        key={i}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block rounded-lg border border-stone-300 bg-white px-4 py-2 font-sans text-sm font-medium text-stone-800 hover:bg-stone-50"
+                      >
+                        {link.name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
               {item.media_url && (
                 <a
                   href={item.media_url}

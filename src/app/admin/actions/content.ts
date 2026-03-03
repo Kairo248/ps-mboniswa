@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import type { ContentCategory, ContentStatusTag, ContentFeedInsert, ContentFeedUpdate } from '@/types/database';
+import type { ContentCategory, ContentStatusTag, ContentFeedInsert, ContentFeedUpdate, PlatformLink } from '@/types/database';
 
 export type ContentFormState = { error?: string; success?: boolean };
 
@@ -12,6 +12,20 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES];
 const MAX_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
+
+function parsePlatformLinks(raw: FormDataEntryValue | null): PlatformLink[] {
+  if (raw == null || typeof raw !== 'string') return [];
+  try {
+    const arr = JSON.parse(raw) as unknown;
+    if (!Array.isArray(arr)) return [];
+    return arr
+      .filter((x): x is { name?: string; url?: string } => x != null && typeof x === 'object')
+      .map((x) => ({ name: String(x.name ?? '').trim(), url: String(x.url ?? '').trim() }))
+      .filter((x) => x.url);
+  } catch {
+    return [];
+  }
+}
 
 async function uploadMedia(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, file: File): Promise<string | null> {
   if (!file.size || !ALLOWED_TYPES.includes(file.type)) return null;
@@ -41,6 +55,7 @@ export async function createContent(_prev: ContentFormState, formData: FormData)
   const mediaFile = formData.get('media_file') as File | null;
   const category = formData.get('category') as ContentCategory;
   const status_tag = (formData.get('status_tag') as ContentStatusTag) || null;
+  const platform_links = parsePlatformLinks(formData.get('platform_links'));
 
   if (!title?.trim()) return { error: 'Title is required' };
   if (!category || !['Sermon', 'Music', 'Event'].includes(category)) {
@@ -60,6 +75,7 @@ export async function createContent(_prev: ContentFormState, formData: FormData)
     media_url,
     category,
     status_tag: status_tag && ['Hot', 'New', 'Popular', 'Live'].includes(status_tag) ? status_tag : null,
+    platform_links: platform_links.length > 0 ? platform_links : null,
     created_by: user.id,
   };
   // @ts-expect-error Database generic can infer never for Insert; payload matches schema
@@ -85,6 +101,7 @@ export async function updateContent(
   const mediaFile = formData.get('media_file') as File | null;
   const category = formData.get('category') as ContentCategory;
   const status_tag = (formData.get('status_tag') as ContentStatusTag) || null;
+  const platform_links = parsePlatformLinks(formData.get('platform_links'));
 
   if (!title?.trim()) return { error: 'Title is required' };
   if (!category || !['Sermon', 'Music', 'Event'].includes(category)) {
@@ -96,6 +113,7 @@ export async function updateContent(
     description: description?.trim() || null,
     category,
     status_tag: status_tag && ['Hot', 'New', 'Popular', 'Live'].includes(status_tag) ? status_tag : null,
+    platform_links: platform_links.length > 0 ? platform_links : null,
   };
   if (mediaFile?.size && mediaFile.size > 0) {
     const uploaded = await uploadMedia(supabase, user.id, mediaFile);

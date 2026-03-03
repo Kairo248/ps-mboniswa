@@ -2,11 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { useActionState } from 'react';
-import type { ContentFeed } from '@/types/database';
+import type { ContentFeed, PlatformLink } from '@/types/database';
 import type { ContentFormState } from '../actions/content';
 
 const CATEGORIES = ['Sermon', 'Music', 'Event'] as const;
 const STATUS_TAGS = ['Hot', 'New', 'Popular', 'Live'] as const;
+
+const PLATFORM_OPTIONS = [
+  'Spotify',
+  'Apple Music',
+  'YouTube Music',
+  'Audiomack',
+  'iHeart',
+  'Other',
+] as const;
 
 const ACCEPT_MEDIA = 'image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime';
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -27,10 +36,24 @@ type Props = {
   initial?: ContentFeed | null;
 };
 
+function normalizePlatformLinks(raw: unknown): PlatformLink[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((x): x is { name?: string; url?: string } => x != null && typeof x === 'object')
+    .map((x) => ({ name: String(x.name ?? '').trim(), url: String(x.url ?? '').trim() }))
+    .filter((x) => x.name || x.url);
+}
+
 export function ContentForm({ action, initial }: Props) {
   const [state, formAction] = useActionState(action, {} as ContentFormState);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [selectedFileType, setSelectedFileType] = useState<'image' | 'video' | null>(null);
+  const [category, setCategory] = useState<typeof CATEGORIES[number]>(
+    initial?.category ?? 'Sermon'
+  );
+  const [platformLinks, setPlatformLinks] = useState<PlatformLink[]>(() =>
+    normalizePlatformLinks(initial?.platform_links)
+  );
 
   useEffect(() => {
     return () => {
@@ -110,7 +133,8 @@ export function ContentForm({ action, initial }: Props) {
         <select
           name="category"
           required
-          defaultValue={initial?.category}
+          value={category}
+          onChange={(e) => setCategory(e.target.value as typeof CATEGORIES[number])}
           className="border border-neutral-300 rounded-lg px-3 py-2"
         >
           {CATEGORIES.map((c) => (
@@ -118,6 +142,72 @@ export function ContentForm({ action, initial }: Props) {
           ))}
         </select>
       </label>
+
+      {category === 'Music' && (
+        <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-neutral-50/50 p-4">
+          <span className="text-sm font-medium text-neutral-700">Digital platforms (for this song)</span>
+          <p className="text-xs text-neutral-500">
+            Add links where this song is available (Spotify, Apple Music, etc.).
+          </p>
+          {platformLinks.map((link, i) => (
+            <div key={i} className="flex flex-wrap items-end gap-2">
+              <label className="flex flex-col gap-1 min-w-[8rem]">
+                <span className="text-xs text-neutral-500">Platform</span>
+                <select
+                  value={link.name && PLATFORM_OPTIONS.includes(link.name as typeof PLATFORM_OPTIONS[number]) ? link.name : (link.name || 'Spotify')}
+                  onChange={(e) => {
+                    const next = [...platformLinks];
+                    next[i] = { ...next[i], name: e.target.value };
+                    setPlatformLinks(next);
+                  }}
+                  className="border border-neutral-300 rounded-lg px-2 py-1.5 text-sm"
+                >
+                  {PLATFORM_OPTIONS.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col gap-1 flex-1 min-w-[12rem]">
+                <span className="text-xs text-neutral-500">URL</span>
+                <input
+                  type="url"
+                  value={link.url}
+                  onChange={(e) => {
+                    const next = [...platformLinks];
+                    next[i] = { ...next[i], url: e.target.value };
+                    setPlatformLinks(next);
+                  }}
+                  placeholder="https://..."
+                  className="border border-neutral-300 rounded-lg px-2 py-1.5 text-sm"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => setPlatformLinks(platformLinks.filter((_, j) => j !== i))}
+                className="rounded-lg border border-neutral-300 px-2 py-1.5 text-sm text-neutral-600 hover:bg-neutral-100"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setPlatformLinks([...platformLinks, { name: 'Spotify', url: '' }])}
+            className="self-start rounded-lg border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+          >
+            + Add platform
+          </button>
+          <input
+            type="hidden"
+            name="platform_links"
+            value={JSON.stringify(platformLinks.filter((l) => l.url.trim()))}
+          />
+        </div>
+      )}
+      {category !== 'Music' && (
+        <input type="hidden" name="platform_links" value="[]" />
+      )}
+
       <label className="flex flex-col gap-1">
         <span className="text-sm font-medium text-neutral-700">Status tag</span>
         <select

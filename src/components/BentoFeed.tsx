@@ -81,6 +81,11 @@ function BentoCard({
           >
             View details
           </Link>
+          {feedItem.category === 'Music' && feedItem.platform_links && feedItem.platform_links.length > 0 && (
+            <span className="font-sans text-xs text-stone-500">
+              · {feedItem.platform_links.map((p) => p.name).join(', ')}
+            </span>
+          )}
           {feedItem.media_url && !mediaIsImage && (
             <a
               href={feedItem.media_url}

@@ -27,6 +27,12 @@ export type ProfileInsert = Omit<Profile, 'created_at' | 'updated_at'> & {
 
 export type ProfileUpdate = Partial<Omit<Profile, 'id'>>;
 
+/** One link to a digital platform (e.g. Spotify, Apple Music) for Music content */
+export interface PlatformLink {
+  name: string;
+  url: string;
+}
+
 /** content_feed */
 export interface ContentFeed {
   id: string;
@@ -35,6 +41,7 @@ export interface ContentFeed {
   media_url: string | null;
   category: ContentCategory;
   status_tag: ContentStatusTag | null;
+  platform_links: PlatformLink[] | null;
   created_at: string;
   updated_at: string;
   created_by: string | null;
