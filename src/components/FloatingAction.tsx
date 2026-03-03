@@ -19,7 +19,7 @@ export function FloatingAction() {
               transition={{ duration: 0.2 }}
             >
               <Link
-                href="#request-prayer"
+                href="/prayer"
                 className="rounded-full border border-stone-200 bg-white px-5 py-2.5 font-sans text-sm font-medium text-stone-800 shadow-lg ring-1 ring-stone-900/5 block"
               >
                 Request Prayer
@@ -32,7 +32,7 @@ export function FloatingAction() {
               transition={{ duration: 0.2, delay: 0.03 }}
             >
               <Link
-                href="#book-artist"
+                href="/book"
                 className="rounded-full border border-stone-200 bg-white px-5 py-2.5 font-sans text-sm font-medium text-stone-800 shadow-lg ring-1 ring-stone-900/5 block"
               >
                 Book Artist

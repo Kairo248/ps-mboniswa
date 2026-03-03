@@ -3,16 +3,14 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
-const HERO_IMAGE =
-  'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop';
 
 export function Hero() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
-          src={HERO_IMAGE}
-          alt=""
+          src="/v-hero.jpeg"
+          alt="Pastor Vincent Mboniswa"
           fill
           priority
           className="object-cover"
