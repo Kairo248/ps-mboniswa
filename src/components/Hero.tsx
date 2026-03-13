@@ -26,7 +26,7 @@ export function Hero() {
         className="relative z-10 mx-4 max-w-2xl rounded-2xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-xl md:p-12"
       >
         <h1 className="font-serif text-4xl font-medium tracking-tight text-white drop-shadow-sm md:text-5xl lg:text-6xl">
-          Pastor Mboniswa
+          Pastor V Mboniswa
         </h1>
         <p className="mt-4 font-sans text-lg leading-relaxed text-white/95 md:text-xl">
           Gospel artist & pastor. Music, ministry, and presence for every season.

@@ -33,10 +33,10 @@ export default async function HomePage() {
             the bottom-right corner or send an email to
             {' '}
             <a
-              href="mailto:bookings@mboniswa.co.za"
+              href="mailto:vincentmboniswa@gmail.com"
               className="font-medium text-stone-900 underline underline-offset-2"
             >
-              bookings@mboniswa.co.za
+              vincentmboniswa@gmail.com
             </a>
             .
           </p>
