@@ -4,21 +4,19 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-stone-200/70 bg-cream/90">
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-stone-600 sm:flex-row sm:items-center sm:justify-between">
-        <p className="font-sans text-xs sm:text-sm">
-          © {year} Mboniswa. All rights reserved.
+    <footer className="border-t border-white/10 bg-stone-950">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-stone-400 sm:flex-row sm:items-center sm:justify-between">
+        <p className="font-sans text-xs uppercase tracking-widest text-stone-500 sm:text-sm">
+          © {year} Pastor V Mboniswa
         </p>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm">
-          <Link href="/about" className="hover:text-stone-900">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs sm:text-sm">
+          <Link href="/about" className="uppercase tracking-widest text-gold-400/90 hover:text-gold-300">
             About
           </Link>
-          <span className="hidden text-stone-300 sm:inline">•</span>
-          <Link href="/book" className="hover:text-stone-900">
+          <Link href="/book" className="uppercase tracking-widest text-gold-400/90 hover:text-gold-300">
             Book
           </Link>
-          <span className="hidden text-stone-300 sm:inline">•</span>
-          <a href="#contact" className="hover:text-stone-900">
+          <a href="#contact" className="uppercase tracking-widest text-gold-400/90 hover:text-gold-300">
             Contact
           </a>
         </div>
@@ -26,4 +24,3 @@ export function Footer() {
     </footer>
   );
 }
-
