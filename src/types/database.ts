@@ -7,7 +7,7 @@ export type AppRole = 'super_admin' | 'editor';
 
 export type ContentCategory = 'Sermon' | 'Music' | 'Event';
 
-export type ContentStatusTag = 'Hot' | 'New' | 'Popular' | 'Live';
+export type ContentStatusTag = 'Promo' | 'Hot' | 'New' | 'Popular' | 'Live';
 
 /** profiles – Admin RBAC */
 export interface Profile {
@@ -55,6 +55,28 @@ export type ContentFeedInsert = Omit<ContentFeed, 'id' | 'created_at' | 'updated
 
 export type ContentFeedUpdate = Partial<Omit<ContentFeed, 'id'>>;
 
+/** promo – featured promotion block for homepage */
+export interface Promo {
+  id: string;
+  title: string;
+  description: string | null;
+  media_url: string | null;
+  cta_label: string | null;
+  cta_url: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+}
+
+export type PromoInsert = Omit<Promo, 'id' | 'created_at' | 'updated_at'> & {
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type PromoUpdate = Partial<Omit<Promo, 'id'>>;
+
 /** itinerary – upcoming appearances */
 export interface Itinerary {
   id: string;
@@ -90,6 +112,11 @@ export interface Database {
         Row: ContentFeed;
         Insert: ContentFeedInsert;
         Update: ContentFeedUpdate;
+      };
+      promo: {
+        Row: Promo;
+        Insert: PromoInsert;
+        Update: PromoUpdate;
       };
       itinerary: {
         Row: Itinerary;

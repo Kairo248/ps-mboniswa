@@ -51,13 +51,22 @@ export default async function ContentDetailPage({
           </Link>
 
           <article className="mt-6 overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm">
-            {item.media_url && mediaIsImage && (
+            {item.media_url && (
               <div className="relative aspect-video w-full overflow-hidden bg-stone-100">
-                <img
-                  src={item.media_url}
-                  alt={item.title}
-                  className="h-full w-full object-cover"
-                />
+                {mediaIsImage ? (
+                  <img
+                    src={item.media_url}
+                    alt={item.title}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <video
+                    src={item.media_url}
+                    controls
+                    preload="metadata"
+                    className="h-full w-full object-cover"
+                  />
+                )}
               </div>
             )}
             <div className="p-6 md:p-8">
@@ -102,7 +111,7 @@ export default async function ContentDetailPage({
                   rel="noopener noreferrer"
                   className="mt-6 inline-block rounded-lg bg-stone-900 px-4 py-2 font-sans text-sm font-medium text-white hover:bg-stone-800"
                 >
-                  {mediaIsImage ? 'View image' : 'Watch / Listen'}
+                  {mediaIsImage ? 'Open image' : 'Open video'}
                 </a>
               )}
             </div>

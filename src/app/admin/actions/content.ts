@@ -13,6 +13,23 @@ const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES];
 const MAX_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
+function inferContentType(file: File): string | null {
+  if (file.type && ALLOWED_TYPES.includes(file.type)) return file.type;
+
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+  if (!ext) return null;
+
+  if (['jpg', 'jpeg'].includes(ext)) return 'image/jpeg';
+  if (ext === 'png') return 'image/png';
+  if (ext === 'gif') return 'image/gif';
+  if (ext === 'webp') return 'image/webp';
+  if (ext === 'mp4') return 'video/mp4';
+  if (ext === 'webm') return 'video/webm';
+  if (['mov', 'qt'].includes(ext)) return 'video/quicktime';
+
+  return null;
+}
+
 function parsePlatformLinks(raw: FormDataEntryValue | null): PlatformLink[] {
   if (raw == null || typeof raw !== 'string') return [];
   try {
@@ -28,15 +45,17 @@ function parsePlatformLinks(raw: FormDataEntryValue | null): PlatformLink[] {
 }
 
 async function uploadMedia(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, file: File): Promise<string | null> {
-  if (!file.size || !ALLOWED_TYPES.includes(file.type)) return null;
+  if (!file.size) return null;
   if (file.size > MAX_SIZE_BYTES) return null;
 
-  const ext = file.name.split('.').pop() || 'bin';
+  const contentType = inferContentType(file);
+  if (!contentType || !ALLOWED_TYPES.includes(contentType)) return null;
+
   const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_').slice(0, 100);
   const path = `${userId}/${Date.now()}-${safeName}`;
 
   const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
-    contentType: file.type,
+    contentType,
     upsert: false,
   });
   if (error) return null;
@@ -74,7 +93,7 @@ export async function createContent(_prev: ContentFormState, formData: FormData)
     description: description?.trim() || null,
     media_url,
     category,
-    status_tag: status_tag && ['Hot', 'New', 'Popular', 'Live'].includes(status_tag) ? status_tag : null,
+    status_tag: status_tag && ['Promo', 'Hot', 'New', 'Popular', 'Live'].includes(status_tag) ? status_tag : null,
     platform_links: platform_links.length > 0 ? platform_links : null,
     created_by: user.id,
   };
@@ -112,7 +131,7 @@ export async function updateContent(
     title: title.trim(),
     description: description?.trim() || null,
     category,
-    status_tag: status_tag && ['Hot', 'New', 'Popular', 'Live'].includes(status_tag) ? status_tag : null,
+    status_tag: status_tag && ['Promo', 'Hot', 'New', 'Popular', 'Live'].includes(status_tag) ? status_tag : null,
     platform_links: platform_links.length > 0 ? platform_links : null,
   };
   if (mediaFile?.size && mediaFile.size > 0) {

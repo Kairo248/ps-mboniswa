@@ -7,6 +7,7 @@ import { SignOutForm } from './sign-out-form';
 
 const navLinks = [
   { href: '/admin', label: 'Dashboard' },
+  { href: '/admin/promo', label: 'Promo' },
   { href: '/admin/content', label: 'Content Feed' },
   { href: '/admin/itinerary', label: 'Itinerary' },
 ];

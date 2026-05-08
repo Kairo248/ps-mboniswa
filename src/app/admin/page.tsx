@@ -3,7 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
-  const [{ count: contentCount }, { count: itineraryCount }] = await Promise.all([
+  const [{ count: promoCount }, { count: contentCount }, { count: itineraryCount }] = await Promise.all([
+    supabase.from('promo').select('*', { count: 'exact', head: true }),
     supabase.from('content_feed').select('*', { count: 'exact', head: true }),
     supabase.from('itinerary').select('*', { count: 'exact', head: true }),
   ]);
@@ -14,6 +15,18 @@ export default async function AdminDashboardPage() {
       <p className="text-neutral-600 text-sm sm:text-base mb-6 sm:mb-8">Manage your content and upcoming appearances.</p>
 
       <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 max-w-2xl">
+        <Link
+          href="/admin/promo"
+          className="block p-4 sm:p-6 rounded-xl border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50 transition-colors"
+        >
+          <h2 className="font-semibold text-lg text-neutral-900 mb-1">Promo</h2>
+          <p className="text-neutral-600 text-sm mb-3">
+            Featured promo section shown on top of the homepage.
+          </p>
+          <p className="text-sm font-medium text-neutral-500">
+            {promoCount ?? 0} promo{(promoCount ?? 0) !== 1 ? 's' : ''}
+          </p>
+        </Link>
         <Link
           href="/admin/content"
           className="block p-4 sm:p-6 rounded-xl border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50 transition-colors"

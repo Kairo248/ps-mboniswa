@@ -6,7 +6,7 @@ import type { ContentFeed, PlatformLink } from '@/types/database';
 import type { ContentFormState } from '../actions/content';
 
 const CATEGORIES = ['Sermon', 'Music', 'Event'] as const;
-const STATUS_TAGS = ['Hot', 'New', 'Popular', 'Live'] as const;
+const STATUS_TAGS = ['Promo', 'Hot', 'New', 'Popular', 'Live'] as const;
 
 const PLATFORM_OPTIONS = [
   'Spotify',
@@ -48,6 +48,7 @@ export function ContentForm({ action, initial }: Props) {
   const [state, formAction] = useActionState(action, {} as ContentFormState);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [selectedFileType, setSelectedFileType] = useState<'image' | 'video' | null>(null);
+  const [statusTag, setStatusTag] = useState<string>(initial?.status_tag ?? '');
   const [category, setCategory] = useState<typeof CATEGORIES[number]>(
     initial?.category ?? 'Sermon'
   );
@@ -212,7 +213,8 @@ export function ContentForm({ action, initial }: Props) {
         <span className="text-sm font-medium text-neutral-700">Status tag</span>
         <select
           name="status_tag"
-          defaultValue={initial?.status_tag ?? ''}
+          value={statusTag}
+          onChange={(e) => setStatusTag(e.target.value)}
           className="border border-neutral-300 rounded-lg px-3 py-2"
         >
           <option value="">None</option>
@@ -220,6 +222,21 @@ export function ContentForm({ action, initial }: Props) {
             <option key={t} value={t}>{t}</option>
           ))}
         </select>
+        {statusTag === 'Promo' && (
+          <span className="text-xs text-neutral-500 mt-0.5">
+            Promo items are shown as the big spotlight on the website.
+          </span>
+        )}
+        {statusTag === 'Hot' && category !== 'Event' && (
+          <span className="text-xs text-amber-800/90 mt-0.5">
+            The large hot spotlight uses Event items only; this item will show a Hot badge in the feed grid.
+          </span>
+        )}
+        {statusTag === 'Hot' && category === 'Event' && (
+          <span className="text-xs text-neutral-500 mt-0.5">
+            Shown as the featured hot event on the site; other Hot items appear as normal cards underneath.
+          </span>
+        )}
       </label>
       <div className="flex gap-3 pt-2">
         <button
